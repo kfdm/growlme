@@ -125,10 +125,10 @@ class GrowlNotificationPacket:
 def send_notification(host, password, title, message):
     addr = (host, GROWL_UDP_PORT)
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    p = GrowlRegistrationPacket(application="buildnotify", password=password)
+    p = GrowlRegistrationPacket(application="growlme", password=password)
     p.addNotification("Build Notification", enabled=True)
     s.sendto(p.payload(), addr)
-    p = GrowlNotificationPacket(application="buildnotify", notification="Build Notification", title=title, description=message, priority=1, password=password)
+    p = GrowlNotificationPacket(application="growlme", notification="growlme", title=title, description=message, priority=1, password=password)
     s.sendto(p.payload(), addr)
     s.close()
 
