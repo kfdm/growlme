@@ -8,7 +8,8 @@ or failure:
 
 To make growl receive remote notifications, you need to turn on "Allow remote application
 registration" in the "Network" tab of growl's preferences panel. Set a password, and put that
-password in `~/.growlpass` or pass it via the `-P` parameter.
+password in `~/.growlpass` or pass it via the `-P` parameter. You'll need to go back to General tab,
+hit Stop Growl, then start it back up and allow it to accept network connections.
 
 In the simplest case, growlme runs locally on a machine that is running growl, and sends the
 notification over a local UDP port. But it can also work over a LAN if the `SSHCLIENT` environment
