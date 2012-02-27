@@ -28,123 +28,17 @@
 # under the License.
 
 import optparse
-import os
 import socket
-import struct
 import subprocess
 import sys
+from gntp.config import mini
 
-try:
-  import hashlib
-  md5_constructor = hashlib.md5
-except ImportError:
-  import md5
-  md5_constructor = md5.new
-
-
-GROWL_PASSWORD = "password"
-GROWL_UDP_PORT = 9887
-GROWL_PROTOCOL_VERSION = 1
-GROWL_TYPE_REGISTRATION = 0
-GROWL_TYPE_NOTIFICATION = 1
-
-
-class GrowlRegistrationPacket:
-    """
-    Builds a Growl Network Registration packet.
-    Defaults to emulating the command-line growlnotify utility.
-    """
-
-    def __init__(self, application="growlnotify", password=None):
-        self.notifications = []
-        self.defaults = [] # array of indexes into notifications
-        self.application = application.encode("utf-8")
-        self.password = password
-
-    def addNotification(self, notification="Command-Line Growl Notification", enabled=True):
-        """Adds a notification type and sets whether it is enabled on the GUI"""
-        self.notifications.append(notification)
-        if enabled:
-            self.defaults.append(len(self.notifications) - 1)
-
-    def payload(self):
-        """Returns the packet payload."""
-        self.data = struct.pack("!BBH", GROWL_PROTOCOL_VERSION, GROWL_TYPE_REGISTRATION, len(self.application))
-        self.data += struct.pack("BB", len(self.notifications), len(self.defaults))
-        self.data += self.application
-        for notification in self.notifications:
-            encoded = notification.encode("utf-8")
-            self.data += struct.pack("!H", len(encoded))
-            self.data += encoded
-        for default in self.defaults:
-            self.data += struct.pack("B", default)
-        self.checksum = md5_constructor()
-        self.checksum.update(self.data)
-        if self.password:
-            self.checksum.update(self.password)
-        self.data += self.checksum.digest()
-        return self.data
-
-
-class GrowlNotificationPacket:
-    """
-    Builds a Growl Network Notification packet.
-    Defaults to emulating the command-line growlnotify utility.
-    """
-
-    def __init__(self, application="growlnotify",
-                 notification="Command-Line Growl Notification", title="Title",
-                 description="Description", priority=0, sticky=False, password=None):
-        self.application  = application.encode("utf-8")
-        self.notification = notification.encode("utf-8")
-        self.title        = title.encode("utf-8")
-        self.description  = description.encode("utf-8")
-        flags = (priority & 0x07) * 2
-        if priority < 0:
-            flags |= 0x08
-        if sticky:
-            flags = flags | 0x0100
-        self.data = struct.pack("!BBHHHHH", GROWL_PROTOCOL_VERSION, GROWL_TYPE_NOTIFICATION, flags,
-                                len(self.notification), len(self.title), len(self.description),
-                                len(self.application))
-        self.data += self.notification
-        self.data += self.title
-        self.data += self.description
-        self.data += self.application
-        self.checksum = md5_constructor()
-        self.checksum.update(self.data)
-        if password:
-            self.checksum.update(password)
-        self.data += self.checksum.digest()
-
-    def payload(self):
-        """Returns the packet payload."""
-        return self.data
-
-
-def send_notification(host, password, title, message):
-    addr = (host, GROWL_UDP_PORT)
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    p = GrowlRegistrationPacket(application="growlme", password=password)
-    p.addNotification("Build Notification", enabled=True)
-    s.sendto(p.payload(), addr)
-    p = GrowlNotificationPacket(application="growlme", notification="growlme", title=title, description=message, priority=1, password=password)
-    s.sendto(p.payload(), addr)
-    s.close()
 
 if __name__ == '__main__':
-    try:
-        growlpass = open(os.path.expanduser("~/.growlpass"), 'r').readline().strip()
-    except:
-        growlpass = GROWL_PASSWORD
-
-    sshclient = os.environ.get('SSH_CLIENT', 'localhost')
-    clientip = sshclient.split()[0]
-
     parser = optparse.OptionParser(usage='usage: %prog [options] <command...>')
     parser.disable_interspersed_args()
-    parser.add_option("-H", "--host", dest='host', default=clientip)
-    parser.add_option("-P", "--password", dest='password', default=growlpass)
+    parser.add_option("-H", "--host", dest='host', default='localhost')
+    parser.add_option("-P", "--password", dest='password', default=None)
     parser.add_option("-m", "--message", dest='success_text', metavar='TEXT', help='message to display on success')
     parser.add_option("--fail", dest='fail_text', metavar='TEXT', help='message to display on failure')
     parser.add_option("-t", "--title", dest='title', help='growl title')
@@ -172,4 +66,4 @@ if __name__ == '__main__':
     else:
         message = opts.fail_text
 
-    send_notification(opts.host, opts.password, opts.title, message)
+    mini(message, hostname=opts.host, password=opts.password)
