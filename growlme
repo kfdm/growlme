@@ -32,8 +32,8 @@ import optparse
 import subprocess
 from gntp.config import mini
 
-ICON_OK = os.path.join(os.path.dirname(__file__), 'ok.png')
-ICON_FAIL = os.path.join(os.path.dirname(__file__), 'fail.png')
+ICON_OK = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'ok.png')
+ICON_FAIL = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fail.png')
 
 
 if __name__ == '__main__':
