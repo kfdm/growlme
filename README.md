@@ -25,6 +25,12 @@ Most of the code is Rui Carmo's "netgrowl", included inline and edited down a bi
 original [on his web site](http://the.taoofmac.com/space/Projects/netgrowl). Greg added the CLI
 wrapper and Robey generalized it into a something that executes other programs.
 
+Icons taken from here
+
+[Alarm-Tick-Icon](http://www.iconarchive.com/show/ivista-2-icons-by-gakuseisean/Alarm-Tick-icon.html)
+
+[Alarm-Fail-Icon](http://www.iconarchive.com/show/ivista-2-icons-by-gakuseisean/Alarm-Error-icon.html)
+
 License
 -------
 

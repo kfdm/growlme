@@ -27,9 +27,13 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import os
 import optparse
 import subprocess
 from gntp.config import mini
+
+ICON_OK = os.path.join(os.path.dirname(__file__), 'ok.png')
+ICON_FAIL = os.path.join(os.path.dirname(__file__), 'fail.png')
 
 
 if __name__ == '__main__':
@@ -54,12 +58,15 @@ if __name__ == '__main__':
 
     if subprocess.call(args) == 0:
         message = opts.success_text
+        icon = file(ICON_OK).read()
     else:
         message = opts.fail_text
+        icon = file(ICON_FAIL).read()
 
     mini(message,
         applicationName='growlme',
         title=opts.title,
         hostname=opts.host,
-        password=opts.password
+        password=opts.password,
+        applicationIcon=icon
         )
