@@ -28,9 +28,7 @@
 # under the License.
 
 import optparse
-import socket
 import subprocess
-import sys
 from gntp.config import mini
 
 
@@ -48,22 +46,20 @@ if __name__ == '__main__':
         parser.error("must provide a command to execute")
 
     if opts.title is None:
-        opts.title = socket.getfqdn() + ": " + " ".join(args)
+        opts.title = ' '.join(args)[:30]
     if opts.success_text is None:
         opts.success_text = "Succeeded"
     if opts.fail_text is None:
         opts.fail_text = "FAILED"
 
-    process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
-    while True:
-        data = process.stdout.read(128)
-        if data == "":
-            break
-        sys.stdout.write(data)
-    exit_code = process.wait()
-    if exit_code == 0:
+    if subprocess.call(args) == 0:
         message = opts.success_text
     else:
         message = opts.fail_text
 
-    mini(message, hostname=opts.host, password=opts.password)
+    mini(message,
+        applicationName='growlme',
+        title=opts.title,
+        hostname=opts.host,
+        password=opts.password
+        )
