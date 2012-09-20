@@ -36,7 +36,7 @@ ICON_OK = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'ok.png')
 ICON_FAIL = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fail.png')
 
 
-if __name__ == '__main__':
+def main():
     parser = optparse.OptionParser(usage='usage: %prog [options] <command...>')
     parser.disable_interspersed_args()
     parser.add_option("-H", "--host", dest='host', default='localhost')
@@ -70,3 +70,6 @@ if __name__ == '__main__':
         password=opts.password,
         applicationIcon=icon
         )
+
+if __name__ == '__main__':
+    main()
