@@ -37,9 +37,12 @@ ICON_FAIL = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fail.png'
 
 
 def main():
+    host = os.environ.get('SSH_CONNECTION')
+    hostname = host.split()[0] if host else 'localhost'
+
     parser = optparse.OptionParser(usage='usage: %prog [options] <command...>')
     parser.disable_interspersed_args()
-    parser.add_option("-H", "--host", dest='host', default='localhost')
+    parser.add_option("-H", "--host", dest='host', default=hostname)
     parser.add_option("-P", "--password", dest='password', default=None)
     parser.add_option("-m", "--message", dest='success_text', metavar='TEXT', help='message to display on success')
     parser.add_option("--fail", dest='fail_text', metavar='TEXT', help='message to display on failure')
