@@ -30,10 +30,21 @@
 import os
 import optparse
 import subprocess
+import time
 from gntp.config import mini
 
 ICON_OK = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'ok.png')
 ICON_FAIL = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fail.png')
+
+
+def format_time(seconds):
+    """Simple text formating of time"""
+    if seconds < 60:
+        return '%d seconds' % seconds
+    if seconds > 60 and seconds < 3600:
+        return '%d minutes' % (seconds / 60)
+    if seconds > 3600:
+        return '%d hours' % (seconds / 3600)
 
 
 def main():
@@ -55,16 +66,22 @@ def main():
     if opts.title is None:
         opts.title = ' '.join(args)[:30]
     if opts.success_text is None:
-        opts.success_text = "Succeeded"
+        opts.success_text = "Succeeded\nDuration {time}"
     if opts.fail_text is None:
-        opts.fail_text = "FAILED"
+        opts.fail_text = "FAILED\nDuration {time}"
 
-    if subprocess.call(args) == 0:
+    start = time.time()
+    result = subprocess.call(args)
+    stop = time.time()
+
+    if result == 0:
         message = opts.success_text
         icon = file(ICON_OK).read()
     else:
         message = opts.fail_text
         icon = file(ICON_FAIL).read()
+
+    message = message.replace('{time}', format_time(stop - start))
 
     mini(message,
         applicationName='growlme',
