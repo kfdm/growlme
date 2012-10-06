@@ -40,11 +40,15 @@ ICON_FAIL = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fail.png'
 def format_time(seconds):
     """Simple text formating of time"""
     if seconds < 60:
-        return '%d seconds' % seconds
+        return '%ds' % seconds
     if seconds > 60 and seconds < 3600:
-        return '%d minutes' % (seconds / 60)
+        minutes = seconds / 60
+        seconds = seconds % 60
+        return '%dm %02ds' % (minutes, seconds)
     if seconds > 3600:
-        return '%d hours' % (seconds / 3600)
+        hours = seconds / 3600
+        minutes = (seconds % 3600) / 60
+        return '%dh %02dm' % (hours, minutes)
 
 
 def main():
