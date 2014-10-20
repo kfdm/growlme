@@ -62,6 +62,7 @@ def main():
     parser.add_option("-m", "--message", dest='success_text', metavar='TEXT', help='message to display on success')
     parser.add_option("--fail", dest='fail_text', metavar='TEXT', help='message to display on failure')
     parser.add_option("-t", "--title", dest='title', help='growl title')
+    parser.add_option("-s", "--sticky", dest='sticky', action='store_true')
 
     (opts, args) = parser.parse_args()
     if not args:
@@ -92,7 +93,8 @@ def main():
         title=opts.title,
         hostname=opts.host,
         password=opts.password,
-        applicationIcon=icon
+        applicationIcon=icon,
+        sticky=opts.sticky,
         )
 
 if __name__ == '__main__':
