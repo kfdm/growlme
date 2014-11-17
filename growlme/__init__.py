@@ -76,8 +76,15 @@ def main():
         opts.fail_text = "FAILED\nDuration {time}"
 
     start = time.time()
-    result = subprocess.call(args)
-    stop = time.time()
+    try:
+        proc = subprocess.Popen(args)
+        proc.wait()
+    except KeyboardInterrupt:
+        proc.terminate()
+        proc.wait()
+    finally:
+        result = proc.returncode
+        stop = time.time()
 
     if result == 0:
         message = opts.success_text
@@ -97,5 +104,7 @@ def main():
         sticky=opts.sticky,
         )
 
+    return result
+
 if __name__ == '__main__':
-    main()
+    exit(main())
