@@ -59,8 +59,14 @@ def main():
     parser.disable_interspersed_args()
     parser.add_option("-H", "--host", dest='host', default=hostname)
     parser.add_option("-P", "--password", dest='password', default=None)
-    parser.add_option("-m", "--message", dest='success_text', metavar='TEXT', help='message to display on success')
-    parser.add_option("--fail", dest='fail_text', metavar='TEXT', help='message to display on failure')
+    parser.add_option(
+        "-m", "--message", dest='success_text', metavar='TEXT',
+        default="Succeeded\nDuration {time}",
+        help='message to display on success',)
+    parser.add_option(
+        "--fail", dest='fail_text', metavar='TEXT',
+        default="FAILED\nDuration {time}",
+        help='message to display on failure')
     parser.add_option("-t", "--title", dest='title', help='growl title')
     parser.add_option("-s", "--sticky", dest='sticky', action='store_true')
 
@@ -70,10 +76,6 @@ def main():
 
     if opts.title is None:
         opts.title = ' '.join(args)[:30]
-    if opts.success_text is None:
-        opts.success_text = "Succeeded\nDuration {time}"
-    if opts.fail_text is None:
-        opts.fail_text = "FAILED\nDuration {time}"
 
     start = time.time()
     try:
@@ -95,14 +97,15 @@ def main():
 
     message = message.replace('{time}', format_time(stop - start))
 
-    mini(message,
+    mini(
+        message,
         applicationName='growlme',
         title=opts.title,
         hostname=opts.host,
         password=opts.password,
         applicationIcon=icon,
         sticky=opts.sticky,
-        )
+    )
 
     return result
 
