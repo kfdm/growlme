@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='growlme',
-    version='0.1',
+    version='0.2',
     description='Growl when a comand is finished',
     install_requires=['gntp'],
     license='Apache',
