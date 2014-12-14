@@ -31,10 +31,15 @@ import os
 import optparse
 import subprocess
 import time
+import logging
+
 from gntp.config import mini
 
 ICON_OK = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'ok.png')
 ICON_FAIL = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fail.png')
+
+
+logger = logging.getLogger(__name__)
 
 
 def format_time(seconds):
@@ -69,8 +74,16 @@ def main():
         help='message to display on failure')
     parser.add_option("-t", "--title", dest='title', help='growl title')
     parser.add_option("-s", "--sticky", dest='sticky', action='store_true')
+    parser.add_option(
+        "-v", "--verbose",
+        action='store_const',
+        const=logging.INFO,
+        default=logging.WARNING)
 
     (opts, args) = parser.parse_args()
+
+    logging.basicConfig(level=opts.verbose)
+
     if not args:
         parser.error("must provide a command to execute")
 
